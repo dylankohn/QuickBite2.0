@@ -1,10 +1,10 @@
 # 🍽️ QuickBite - AI Recipe Generator
 
-Generate delicious recipes from your available ingredients using Llama 2.7! This app uses a locally hosted LLM to create recipes with ingredients, cooking instructions, and nutrition facts.
+Generate delicious recipes from your available ingredients using Llama 3.2! This app uses a locally hosted LLM to create recipes with ingredients, cooking instructions, and nutrition facts.
 
 ## Features
 
-- 🤖 AI-powered recipe generation using Llama 2.7
+- 🤖 AI-powered recipe generation using Llama 3.2
 - 📝 Complete recipe details: ingredients, instructions, and nutrition facts
 - 🎨 Beautiful, responsive UI
 - 🚀 No external APIs - everything runs locally
@@ -14,7 +14,7 @@ Generate delicious recipes from your available ingredients using Llama 2.7! This
 
 - Node.js (v16 or higher)
 - [Ollama](https://ollama.ai/) installed and running
-- Llama 2.7 model downloaded
+- Llama 3.2 model downloaded
 
 ## Setup Instructions
 
@@ -39,12 +39,12 @@ curl -fsSL https://ollama.ai/install.sh | sh
 curl -fsSL https://ollama.ai/install.sh | sh
 ```
 
-### 2. Download Llama 2.7 Model
+### 2. Download Llama 3.2 Model
 
-After installing Ollama, download the Llama 2.7 model:
+After installing Ollama, download the Llama 3.2 model:
 
 ```bash
-ollama pull llama2.2:7b
+ollama pull llama3.2:3b
 ```
 
 ### 3. Start Ollama
@@ -82,7 +82,7 @@ Edit the `.env` file if needed:
 ```
 PORT=5000
 OLLAMA_URL=http://localhost:11434
-MODEL_NAME=llama2.2:7b
+MODEL_NAME=llama3.2:3b
 ```
 
 ### 6. Start the Application
