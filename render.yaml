@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: quickbite-backend
+    runtime: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        fromService:
+          type: web
+          name: quickbite-backend
+          property: port
+      - key: OLLAMA_URL
+        value: https://your-ollama-service-url.com
+      - key: MODEL_NAME
+        value: llama3.2:3b
+    healthCheckPath: /api/health
+    disk:
+      name: quickbite-disk
+      mountPath: /data
+      sizeGB: 1

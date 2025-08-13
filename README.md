@@ -169,6 +169,23 @@ Edit the `generateRecipePrompt` function in `backend/server.js` to customize how
 ### Styling
 Modify `frontend/src/index.css` to customize the appearance of the application.
 
+## Deployment
+
+### Local Development
+Follow the setup instructions above for local development.
+
+### Production Deployment (Render)
+For deploying to Render cloud service, see the detailed guide:
+- 📄 [Render Deployment Guide](RENDER_DEPLOYMENT.md)
+
+Quick deployment steps:
+1. Push your code to a Git repository
+2. Connect the repository to Render
+3. Configure environment variables (especially `OLLAMA_URL`)
+4. Deploy using the included `render.yaml` configuration
+
+**Note**: You'll need to host Ollama separately or use an alternative LLM API for production deployment.
+
 ## License
 
 MIT License - feel free to use this project for your own purposes!
