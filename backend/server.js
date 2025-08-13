@@ -49,17 +49,12 @@ app.post('/api/recipes', async (req, res) => {
 function generateRecipePrompt(ingredients) {
   const ingredientList = ingredients.join(', ');
   
-  return `You are a professional chef and nutritionist. Given these ingredients: ${ingredientList}
+  return `Generate exactly 3 different recipes using these ingredients: ${ingredientList}
 
-Please generate exactly 3 different recipes that can be made using these ingredients (you can suggest additional common ingredients if needed). 
+You can suggest additional common ingredients if needed.
 
-For each recipe, provide:
-1. Recipe name
-2. Complete ingredient list with quantities
-3. Step-by-step cooking instructions
-4. Estimated nutrition facts per serving (calories, protein, carbs, fat, fiber)
+CRITICAL: Respond ONLY with valid JSON. NO text before or after. ALL values must be in quotes. Follow this EXACT format:
 
-Format your response as JSON with this exact structure:
 {
   "recipes": [
     {
@@ -68,12 +63,13 @@ Format your response as JSON with this exact structure:
         {"item": "ingredient name", "quantity": "amount", "unit": "unit of measurement"}
       ],
       "instructions": [
-        "Step 1 instruction",
-        "Step 2 instruction",
-        "Step 3 instruction"
+        "Step 1: Detailed first step",
+        "Step 2: Second step with specifics",
+        "Step 3: Third step...",
+        "Add as many steps as needed for a complete recipe"
       ],
       "nutrition": {
-        "calories": 300,
+        "calories": "300",
         "protein": "15g",
         "carbs": "45g", 
         "fat": "8g",
@@ -83,21 +79,39 @@ Format your response as JSON with this exact structure:
   ]
 }
 
-Make sure the recipes are practical, delicious, and use the provided ingredients as the main components.`;
+Instructions should be detailed and include as many steps as necessary to properly complete the recipe. Don't limit yourself to just 3 steps - provide comprehensive cooking instructions.
+Remember: ALL nutrition values must be strings in quotes, including calories!`;
 }
 
 function parseRecipesFromResponse(llmResponse) {
   try {
-    // Try to extract JSON from the response
-    const jsonMatch = llmResponse.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
+    console.log('Raw LLM Response:', llmResponse);
+    
+    // Try to find JSON starting with { and ending with }
+    const jsonStart = llmResponse.indexOf('{');
+    const jsonEnd = llmResponse.lastIndexOf('}');
+    
+    if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+      let jsonString = llmResponse.substring(jsonStart, jsonEnd + 1);
+      
+      // Fix common JSON issues from LLM responses
+      // 1. Fix unquoted numbers in nutrition values (e.g., "fat": 12g -> "fat": "12g")
+      jsonString = jsonString.replace(/("(?:calories|protein|carbs|fat|fiber)"\s*:\s*)(\d+[a-zA-Z]*)(,|\s*})/g, '$1"$2"$3');
+      
+      // 2. Fix missing quotes around numbers followed by letters
+      jsonString = jsonString.replace(/:\s*(\d+[a-zA-Z]+)([,}\]])/g, ': "$1"$2');
+      
+      console.log('Cleaned JSON:', jsonString);
+      
+      const parsed = JSON.parse(jsonString);
       if (parsed.recipes && Array.isArray(parsed.recipes)) {
+        console.log('Successfully parsed recipes:', parsed.recipes.length);
         return parsed.recipes;
       }
     }
     
     // Fallback: return a simple parsed version
+    console.log('Using fallback parsing');
     return [{
       name: "Generated Recipe",
       ingredients: [],
@@ -112,6 +126,7 @@ function parseRecipesFromResponse(llmResponse) {
     }];
   } catch (error) {
     console.error('Error parsing LLM response:', error);
+    console.error('Response that failed to parse:', llmResponse);
     return [{
       name: "Generated Recipe",
       ingredients: [],
