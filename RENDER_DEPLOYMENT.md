@@ -15,7 +15,7 @@ This guide explains how to deploy the QuickBite backend to Render cloud service.
 1. **Connect Repository**: 
    - Go to your Render dashboard
    - Click "New +" and select "Blueprint"
-   - Connect your repository containing this project
+   - Connect your repository containing this project.
 
 2. **Configure Environment Variables**:
    The `render.yaml` file is already configured, but you'll need to update:
