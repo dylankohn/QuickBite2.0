@@ -36,8 +36,8 @@ This guide explains how to deploy the QuickBite backend to Render cloud service.
 2. **Configure Service**:
    - **Name**: `quickbite-backend`
    - **Runtime**: `Node`
-   - **Build Command**: `cd backend && npm install`
-   - **Start Command**: `cd backend && npm start`
+   - **Build Command**: `yarn build`
+   - **Start Command**: `yarn start`
 
 3. **Environment Variables**:
    Add the following environment variables in Render dashboard:

@@ -1,0 +1,18 @@
+{
+  "name": "quickbite-monorepo",
+  "version": "1.0.0",
+  "description": "QuickBite recipe generator - deployment configuration",
+  "scripts": {
+    "build": "cd backend && npm install",
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "private": true
+}
