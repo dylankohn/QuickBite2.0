@@ -12,10 +12,10 @@ services:
           type: web
           name: quickbite-backend
           property: port
-      - key: OLLAMA_URL
-        value: https://your-ollama-service-url.com
-      - key: MODEL_NAME
-        value: llama3.2:3b
+      - key: OPENAI_API_KEY
+        value: your-openai-api-key-here
+      - key: OPENAI_MODEL
+        value: gpt-3.5-turbo
     healthCheckPath: /api/health
     disk:
       name: quickbite-disk
