@@ -125,14 +125,14 @@ function parseRecipesFromResponse(llmResponse) {
       }
     }
     
-    // Fallback: return a simple parsed version
-    console.log('Using fallback parsing');
+    // If we can't parse as JSON, return a simple version with the raw content
+    console.log('Using fallback parsing - could not extract valid JSON');
     return [{
       name: "Generated Recipe",
       ingredients: [],
-      instructions: [llmResponse],
+      instructions: ["Please check the console logs for the full recipe details."],
       nutrition: {
-        calories: 0,
+        calories: "0",
         protein: "0g",
         carbs: "0g",
         fat: "0g",
@@ -142,12 +142,24 @@ function parseRecipesFromResponse(llmResponse) {
   } catch (error) {
     console.error('Error parsing LLM response:', error);
     console.error('Response that failed to parse:', llmResponse);
+    
+    // Try one more time with direct JSON.parse in case it's already valid JSON
+    try {
+      const directParsed = JSON.parse(llmResponse);
+      if (directParsed.recipes && Array.isArray(directParsed.recipes)) {
+        console.log('Successfully parsed with direct JSON.parse');
+        return directParsed.recipes;
+      }
+    } catch (directError) {
+      console.log('Direct JSON.parse also failed');
+    }
+    
     return [{
       name: "Generated Recipe",
       ingredients: [],
-      instructions: [llmResponse],
+      instructions: ["Error processing recipe. Please try again."],
       nutrition: {
-        calories: 0,
+        calories: "0",
         protein: "0g",
         carbs: "0g",
         fat: "0g",
