@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const axios = require('axios');
+const OpenAI = require('openai');
 require('dotenv').config();
 
 const app = express();
@@ -21,9 +21,12 @@ process.on('SIGINT', () => {
 app.use(cors());
 app.use(express.json());
 
-// Ollama configuration
-const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
-const MODEL_NAME = process.env.MODEL_NAME || 'llama3.2:3b';
+// OpenAI configuration
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const MODEL_NAME = process.env.OPENAI_MODEL || 'gpt-3.5-turbo';
 
 // Recipe generation endpoint
 app.post('/api/recipes', async (req, res) => {
@@ -36,19 +39,20 @@ app.post('/api/recipes', async (req, res) => {
 
     const prompt = generateRecipePrompt(ingredients);
     
-    // Call Ollama API
-    const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
+    // Call OpenAI API
+    const response = await openai.chat.completions.create({
       model: MODEL_NAME,
-      prompt: prompt,
-      stream: false,
-      options: {
-        temperature: 0.5,
-        top_p: 0.9,
-        max_tokens: 1000
-      }
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.5,
+      max_tokens: 1000
     });
 
-    const recipes = parseRecipesFromResponse(response.data.response);
+    const recipes = parseRecipesFromResponse(response.choices[0].message.content);
     
     res.json({ recipes });
   } catch (error) {
@@ -161,6 +165,6 @@ app.get('/api/health', (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Ollama URL: ${OLLAMA_URL}`);
-  console.log(`Model: ${MODEL_NAME}`);
+  console.log(`OpenAI Model: ${MODEL_NAME}`);
+  console.log(`OpenAI API Key: ${process.env.OPENAI_API_KEY ? 'Set' : 'Not set'}`);
 }); 
